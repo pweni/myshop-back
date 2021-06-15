@@ -13,6 +13,7 @@ urlpatterns = [
     path('',include('app6.urls')),
     path('basic/',include('apps.basic.urls')),
     path('member/',include('apps.member.urls')),
+    path('goods/',include('apps.goods.urls')),
 ]
 
 #if not settings.DEBUG:
