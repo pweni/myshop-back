@@ -56,11 +56,21 @@ from apps.goods.serializers import GoodsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 class GoodsList(APIView):
-    """
-
-    """
     def get(self,request):
         goods=Goods.objects.all()[:10]
         goods_json=GoodsSerializer(goods,many=True)
         return Response(goods_json.data)
+
+from rest_framework import mixins
+from rest_framework import generics
+class GoodsListView_mixins(mixins.ListModelMixin,generics.GenericAPIView):
+    queryset=Goods.objects.all()
+    serializer_class=GoodsSerializer
+    def get(self,request,*args,**kwargs):
+        return self.list(request,*args,**kwargs)
+
+class GoodsListView_List(generics.ListAPIView):
+    queryset=Goods.objects.all()
+    serializer_class=GoodsSerializer
+     
     
