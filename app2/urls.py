@@ -24,7 +24,9 @@ urlpatterns = [
 
     path('indexpage',IndexPageView.as_view()),
 
-    path('app2/test_templateview/',TestTemplateView.as_view())
+    path('app2/test_templateview/',TestTemplateView.as_view()),
+    path('app2/test_listview/',TestListView.as_view()),
+    path('app2/test_detailview/<int:userid>/',TestDetailView.as_view())
 
 
 
