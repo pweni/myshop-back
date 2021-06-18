@@ -52,7 +52,7 @@ class GoodsListView_JsonResponse(View):
             json_list.append(json_dict)
         return JsonResponse(json_list,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})
 
-from apps.goods.serializers import GoodsSerializer
+from app7.serializers import GoodsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 class GoodsView(APIView):
@@ -61,8 +61,18 @@ class GoodsView(APIView):
         goods=Goods.objects.all()[:10]
         #开始序列化
         goods_json=GoodsSerializer(goods,many=True)
-        #返回序列化对象。
+        #返回序列化对象。goods_json.data是序列化后的值
+        print(goods_json.data)
         return Response(goods_json.data)
+    
+    def post(self,request):
+        data=request.data
+        ser_data=GoodsSerializer(data=data,many=False)
+        if ser_data.is_valid():
+            goods=ser_data.save()
+            return Response(ser_data.data)
+        else:
+            return Response(ser_data.errors)
 
 from rest_framework import mixins
 from rest_framework import generics

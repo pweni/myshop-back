@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'app2',
     'app5',
     'app6',
+    'app7',
     'rest_framework',
 ]
 

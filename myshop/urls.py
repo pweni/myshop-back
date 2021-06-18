@@ -11,6 +11,7 @@ urlpatterns = [
     path('',include('app2.urls')),
     path('',include('app5.urls')),
     path('',include('app6.urls')),
+    path('',include('app7.urls')),
     path('basic/',include('apps.basic.urls')),
     path('member/',include('apps.member.urls')),
     path('goods/',include('apps.goods.urls')),
