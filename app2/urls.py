@@ -21,7 +21,8 @@ urlpatterns = [
     path('app2/test_redirect_model/<int:id>/',views.test_redirect_model,name='app2_test_redirect_model'),
     path('app2/userinfo/<int:id>/',views.userinfo,name='app2_userinfo'),
     path('app2/test_redirect_views/<int:id>/',views.test_redirect_views,name='app2_test_redirect_views'),
-
+    path('app2/upload_file/',views.upload_file),
+    
     path('indexpage',IndexPageView.as_view()),
 
     path('app2/test_templateview/',TestTemplateView.as_view()),

@@ -70,7 +70,29 @@ def index_page(request):
     elif request.method == 'POST':
         return HttpResponse("post请求")
 
+def upload_file(request): 
+    if request.method=="GET":
+        return render(request,"2/upload.html")
+    # 请求方法为POST时，进行处理。文件上传为POST请求。
+    if request.method == "POST":
+        # 获取上传的文件，如果没有文件，则默认为None  
+        myFile =request.FILES.get("myfile", None)
+        if myFile:
+            # 二进制的写操作
+            path='media/uploads/'
+            if not os.path.exists(path):
+                os.makedirs(path)
+            dest = open(os.path.join(path+myFile.name),'wb+') 
+            for chunk in myFile.chunks():      # 分块写入文件 
+                dest.write(chunk) 
+            dest.close() 
+            return HttpResponse("上传完成!")
+        else:
+            return HttpResponse("没有上传文件！") 
+
+
 from django.views import View
+import os
 class IndexPageView(View):
     '''
     类视图
