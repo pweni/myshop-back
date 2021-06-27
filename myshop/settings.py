@@ -25,13 +25,8 @@ INSTALLED_APPS = [
     'apps.goods',
     'apps.member',
     'apps.order',
-    'apps.user',
+    'apps.users',
     'firstapp',
-    'app1',
-    'app2',
-    'app5',
-    'app6',
-    'app7',
     'rest_framework',
 ]
 
@@ -50,7 +45,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'myshop.urls'
 
-AUTH_USER_MODEL="app6.DiyUser"
+AUTH_USER_MODEL="users.MyUser"
 LOGIN_URL = '/diy_login/'  #这个路径需要根据你网站的实际登陆地址来设置
 TEMPLATES = [
     {
@@ -63,6 +58,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -130,8 +126,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-
 STATIC_ROOT = os.path.join(BASE_DIR, '/static')
+
+MEDIA_URL="/media/"
+MEDIA_ROOT=os.path.join(BASE_DIR,"media")
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
