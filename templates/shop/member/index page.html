@@ -116,16 +116,18 @@
                             <td>{{ per.email }}</td>
                             <td>{{ per.mobile }}</td>
                             <td>{{ per.add_time }}</td>
-                            <td width="5%"><img src="/media/{{ per.logo }}" width="100px" height="100px"/></td>
-                            <td width="20%"><a class="btn btn-primary single disabled" onclick="$.operate.edit()">
-                            <i class="fa fa-edit"></i> 修改
-                        </a>
-                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-                            <i class="fa fa-times"></i> 删除
-                        </a>
-                        <a class="btn btn-warning" onclick="$.table.export()">
-                            <i class="fa fa-download"></i> 导出
-                        </a></td>
+                            <td width="5%"><img src="/media/{{ per.logo }}" width="100px" height="100px" /></td>
+                            <td width="20%">
+                                <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                                    <i class="fa fa-edit"></i> 修改
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="delcfm('${ctxPath}/manager/project/delete?id=${vo.id?default("")}')">
+                                    <i class="fa fa-times"></i> 删除
+                                </a>
+                                <a class="btn btn-warning" onclick="$.table.export()">
+                                    <i class="fa fa-download"></i> 导出
+                                </a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -160,7 +162,6 @@
             {% endif %}
             {% endfor %}
 
-
             {% if members.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ members.next_page_number }}">
@@ -172,31 +173,27 @@
     </nav>
 </div>
 
-
-	<!-- 信息删除确认 -->
-	<div class="modal fade" id="delcfmModel">
-		<div class="modal-dialog">
-			<div class="modal-content message_align">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">×</span>
-					</button>
-					<h4 class="modal-title">提示信息</h4>
-				</div>
-				<div class="modal-body">
-					<p>您确认要删除吗？</p>
-				</div>
-				<div class="modal-footer">
-					<input type="hidden" id="url" />
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<a onclick="urlSubmit()" class="btn btn-success"
-						data-dismiss="modal">确定</a>
-				</div>
-			</div>
-			<!-- /.modal-content -->
-		</div>
-		<!-- /.modal-dialog -->
-	</div>
-	<!-- /.modal -->
+<!-- 信息删除确认模态框 -->
+<div class="modal fade" id="delcfmModel">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>您确认要删除吗？</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="url" />
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-success"
+                   data-dismiss="modal">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
