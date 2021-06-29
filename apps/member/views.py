@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import *
+from apps.member.models import *
 
 def index(request):
     if request.method=="GET":
@@ -14,6 +14,7 @@ def index(request):
             curr_page=1
 
         members=Member.objects.order_by("-member_id")
+        print("aaaaa"+str(members))
         paginator=Paginator(members,page_size)
         try:
             members=paginator.page(curr_page)
@@ -21,7 +22,7 @@ def index(request):
             members=paginator.page(1)
         except EmptyPage:
             members=paginator.page(paginator.num_pages)
-    return render(request,'member/index.html',{"members":members})
+    return render(request,'shop/member/index.html',{"members":members})
 #改进分页
 def index_page(request):
     if request.method=="GET":
@@ -64,5 +65,22 @@ def get_memberinfo(request):
 
 
 def list(request):
-
     return render(request,'member/list.html')
+
+def index_bttable(request):
+    return render(request,'shop/member/index_bttable.html')
+
+def ajax_member(request):
+    total=Member.objects.count()
+    members=Member.objects.order_by("-member_id")
+    rows=[]
+    datas={"total":total,"rows":rows}
+    for member in members:
+        rows.append({
+            "id":member.member_id,
+            "username":member.username,
+            "truename":member.truename,
+            "sex":member.sex,
+            "email":member.email,
+            })
+    return JsonResponse(datas,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})

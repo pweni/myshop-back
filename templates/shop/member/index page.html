@@ -1,7 +1,11 @@
-{% extends "base.html" %}
+{% extends "shop/base.html" %}
 {% load static %}
-{% block content%}
 
+ {% block ext_css %}
+<link rel="stylesheet" href="{% static 'dist/css/common.css'%}">
+ {% endblock %}
+
+ {% block content%}
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -9,13 +13,13 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <h1 class="m-0">
-                            商品模块                    <small>列表</small>
+                            会员模块                    <small>列表</small>
                         </h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/admin/index/index.html">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="/admin/Article/index.html">商品模块</a></li>
+                            <li class="breadcrumb-item active"><a href="/admin/Article/index.html">会员模块</a></li>
                         </ol>
                     </div>
                 </div>
@@ -34,23 +38,14 @@
                                     <label>分类： </label>
                                     <select id="search_cate_id" name="cate_id">
                                         <option value="">所有</option>
-                                        <option value="1">关于我们</option>
-                                        <option value="2">|&mdash; 公司介绍</option>
-                                        <option value="3">|&mdash; 公司文化</option>
-                                        <option value="4">新闻中心</option>
-                                        <option value="5">|&mdash; 公司新闻</option>
-                                        <option value="6">|&mdash; 行业资讯</option>
-                                        <option value="7">资质荣誉</option>
-                                        <option value="8">产品中心</option>
-                                        <option value="9">|&mdash; 精选产品</option>
-                                        <option value="10">|&mdash; 热销产品</option>
-                                        <option value="11">资料下载</option>
-                                        <option value="12">优秀团队</option>
-                                        <option value="13">联系我们</option>
+                                        <option value="1">钻石卡会员</option>
+                                        <option value="2">金卡会员</option>
+                                        <option value="3">银卡会员</option>
+                                        <option value="4">寂寞卡会员</option>
                                     </select>
                                 </li>
                                 <li>
-                                    <label>标题： </label>
+                                    <label>名称： </label>
 
                                     <input type="text" id="search_title" name="title" value="" />
                                 </li>
@@ -58,8 +53,8 @@
                                     <label>状态： </label>
                                     <select id="search_status" name="status">
                                         <option value="">所有</option>
-                                        <option value="1">显示</option>
-                                        <option value="0">隐藏</option>
+                                        <option value="0">正常</option>
+                                        <option value="1">异常</option>
                                     </select>
                                 </li>
                                 <li>
@@ -96,22 +91,43 @@
     <div class="col-sm-12 main">
         <br>
         <div class="panel panel-primary">
-
             <div class="panel-body">
                 <table class="table table-bordered table-condensed table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>姓名</th>
-                            <th>邮件</th>
-                            <th>薪水</th>
+                            <th>账号</th>
+                            <th>真实姓名</th>
+                            <th>性别</th>
+                            <th>生日</th>
+                            <th>email</th>
+                            <th>手机</th>
+                            <th>添加时间</th>
+                            <th>用户头像</th>
+                            <th>功能操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for per in members %}
                         <tr>
-                            <td>{{ per.member_id }}</td>
                             <td>{{ per.username }}</td>
                             <td>{{ per.truename }}</td>
+                            <td>{{ per.sex }}</td>
+                            <td>{{ per.birthday }}</td>
+                            <td>{{ per.email }}</td>
+                            <td>{{ per.mobile }}</td>
+                            <td>{{ per.add_time }}</td>
+                            <td width="5%"><img src="/media/{{ per.logo }}" width="100px" height="100px" /></td>
+                            <td width="20%">
+                                <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                                    <i class="fa fa-edit"></i> 修改
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="delcfm('${ctxPath}/manager/project/delete?id=${vo.id?default("")}')">
+                                    <i class="fa fa-times"></i> 删除
+                                </a>
+                                <a class="btn btn-warning" onclick="$.table.export()">
+                                    <i class="fa fa-download"></i> 导出
+                                </a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -120,8 +136,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
-
             </div>
         </div>
     </div>
@@ -148,7 +162,6 @@
             {% endif %}
             {% endfor %}
 
-
             {% if members.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ members.next_page_number }}">
@@ -158,5 +171,29 @@
             {% endif %}
         </ul>
     </nav>
+</div>
+
+<!-- 信息删除确认模态框 -->
+<div class="modal fade" id="delcfmModel">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>您确认要删除吗？</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="url" />
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-success"
+                   data-dismiss="modal">确定</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
