@@ -21,7 +21,7 @@ def index(request):
             members=paginator.page(1)
         except EmptyPage:
             members=paginator.page(paginator.num_pages)
-    return render(request,'member/index.html',{"members":members})
+    return render(request,'shop/member/index.html',{"members":members})
 #改进分页
 def index_page(request):
     if request.method=="GET":
