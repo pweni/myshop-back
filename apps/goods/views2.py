@@ -6,8 +6,7 @@ import json
 
 class GoodsCategory(View):
     def get(self,request):
-        cates=GoodsCategory.objects.all()
-        return render(request,"shop/goods/goods_category.html",{"cates":cates})
+        pass
 
     def post(self,request):
         pass

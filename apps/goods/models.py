@@ -1,18 +1,15 @@
 from django.db import models
 from datetime import datetime
+from common.base_model import BaseModel
 
-class GoodsCategory(models.Model):
-    LEVEL=(
-        (1,"一级分类"),
-        (2,"二级分类"),
-        (3,"三级分类"),
-    )
+class GoodsCategory(BaseModel):
     id = models.AutoField(primary_key=True)
     name=models.CharField(max_length=50,verbose_name='分类名称',default='')
-    level=models.IntegerField(choices=LEVEL,default=0,verbose_name='分类级别') 
     parent=models.ForeignKey("self", null=True,blank=True,verbose_name="父类",on_delete=models.DO_NOTHING)
+    logo=models.ImageField(verbose_name="分类logo图片",upload_to="uploads/goods_img/")
     sort=models.IntegerField(verbose_name='排序')
-    createDate=models.DateTimeField(default=datetime.now,verbose_name='创建时间')
+    #create_time=models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
+    #update_time=models.DateTimeField(auto_now=True,verbose_name="更新时间")
 
     def __str__(self):
         return self.name
