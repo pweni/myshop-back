@@ -2,10 +2,40 @@ from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.member.models import *
+from django.db.models import F
+
+def add(request):
+    return render(request,'shop/member/add.html')
+
+def edit(request,id):
+    print(id)
+    return render(request,'shop/member/edit.html')
+
+def delete(request,id):
+    obj=Member.objects.get(member_id=id)
+    obj.delete()
+    json_dict={}
+    json_dict["code"]=200
+    json_dict["msg"]="删除数据成功"
+    return JsonResponse(json_dict)
 
 def index(request):
     if request.method=="GET":
-        page_size=50 #每页显示的行数
+        level=request.GET.get("level")
+        truename=request.GET.get("truename",'')
+        status=request.GET.get("status")
+
+        search_dict=dict()
+        if level:
+            search_dict["level"]=level
+        if truename: 
+            search_dict["truename"]=truename
+        if status:
+            search_dict["status"]=status
+        
+        datas=Member.objects.filter(**search_dict).order_by("-member_id")
+
+        page_size=2 #每页显示的行数
         try:
             if not request.GET.get("page"):
                 curr_page=1
@@ -13,16 +43,20 @@ def index(request):
         except:
             curr_page=1
 
-        members=Member.objects.order_by("-member_id")
-        print("aaaaa"+str(members))
-        paginator=Paginator(members,page_size)
+        paginator=Paginator(datas,page_size)
         try:
             members=paginator.page(curr_page)
         except PageNotAnInteger:
             members=paginator.page(1)
         except EmptyPage:
-            members=paginator.page(paginator.num_pages)
-    return render(request,'shop/member/index.html',{"members":members})
+            members=paginator.page(1)
+        context={
+            'level':level,
+            'truename':truename,
+            'status':status,
+            'members':members,
+        }
+    return render(request,'shop/member/index.html',context=context)
 #改进分页
 def index_page(request):
     if request.method=="GET":

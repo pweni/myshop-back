@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from common.base_model import BaseModel
+from ckeditor_uploader.fields import RichTextUploadingField
 
 class GoodsCategory(BaseModel):
     id = models.AutoField(primary_key=True)
@@ -19,6 +20,10 @@ class GoodsCategory(BaseModel):
         db_table='d_goods_category'
 
 class Goods(models.Model):
+    STATUS=(
+        (0,'正常'),
+        (1,'下架'),
+    )
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50,verbose_name='商品名称',default='')
     category=models.ForeignKey(GoodsCategory,blank=True,null=True,verbose_name='商品分类',on_delete=models.DO_NOTHING)
@@ -29,7 +34,9 @@ class Goods(models.Model):
     amount = models.IntegerField(default=0, verbose_name="销售量")
     stock_num = models.IntegerField(default=0, verbose_name="库存数")
     fav_num = models.IntegerField(default=0, verbose_name="收藏数")
-    goods_desc=models.CharField(max_length=5000,verbose_name='商品描述',default='')
+    #goods_desc=models.CharField(max_length=5000,verbose_name='商品描述',default='')
+    goods_desc=RichTextUploadingField(default='', verbose_name='商品详情')
+    status=models.IntegerField(default=0,choices=STATUS)
     main_img=models.ImageField(verbose_name='商品主图',blank=True,null=True,upload_to='goods/images/')
     createDate=models.DateTimeField(default=datetime.now,verbose_name='创建时间')
 

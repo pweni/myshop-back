@@ -28,6 +28,9 @@ INSTALLED_APPS = [
     'apps.users',
     'firstapp',
     'rest_framework',
+    'tinymce',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -131,8 +134,31 @@ STATIC_ROOT = os.path.join(BASE_DIR, '/static')
 MEDIA_URL="/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
+}
+
+CKEDITOR_UPLOAD_PATH='upload/'
+CKEDITOR_IMAGE_BACKEND='pillow'
+# 富文本编辑器ckeditor配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': (
+            ['div', 'Source', '-', 'Save', 'NewPage', 'Preview', '-', 'Templates'],
+            ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Print', 'SpellChecker', 'Scayt'],
+            ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat'],
+            ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
+            ['Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
+            ['Styles', 'Format', 'Font', 'FontSize'],
+            ['TextColor', 'BGColor'],
+            ['Maximize', 'ShowBlocks', '-', 'About', 'pbckcode'],
+            ['Blockquote', 'CodeSnippet'],
+        ),
+        'width': 'auto',
+    },
 }

@@ -1,84 +1,157 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.generic.base import View
 from django.http import HttpResponse,JsonResponse
 from apps.goods.models import *
+from apps.goods.forms import *
 import json
 
-class GoodsCategory(View):
+class GoodsCategoryView(View):
     def get(self,request):
         cates=GoodsCategory.objects.all()
-        return render(request,"shop/goods/goods_category.html",{"cates":cates})
+        return render(request,"shop/goods/cate_index.html",{"cates":cates})
 
     def post(self,request):
         pass
 
-class GoodsListView(View):
-    def get(self,request):
-        """
-        商品列表页
-        """
-        json_list=[]
-        goods=Goods.objects.all()[:20]
-        for good in goods:
-            json_dict={}
-            json_dict["name"]=good.name
-            json_dict["market_price"]=good.market_price.to_eng_string()
-            json_dict["price"]=good.price.to_eng_string()
-            json_dict["unit"]=good.unit
-            json_dict["click_num"]=good.click_num
-            json_dict["amount"]=good.amount
-            json_dict["stock_num"]=good.stock_num
-            json_dict["fav_num"]=good.fav_num
-            json_dict["goods_desc"]=good.goods_desc
-            json_dict["main_img"]=str(good.main_img)
-            json_dict["category_id"]=good.category.name
-            json_list.append(json_dict)
-        
-        return HttpResponse(json.dumps(json_list,ensure_ascii=False, indent=4),content_type="application/json")
-        #return JsonResponse(json_list,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})
+class GoodsCategoryAddView(View):
+    def __init__(self):
+        self.alist={}
 
-class GoodsListView_JsonResponse(View):
-    def get(self,request):
-        """
-        商品列表页
-        """
-        json_list=[]
-        goods=Goods.objects.all()[:20]
-        for good in goods:
-            json_dict={}
-            json_dict["name"]=good.name
-            json_dict["market_price"]=good.market_price.to_eng_string()
-            json_dict["price"]=good.price.to_eng_string()
-            json_dict["unit"]=good.unit
-            json_dict["click_num"]=good.click_num
-            json_dict["amount"]=good.amount
-            json_dict["stock_num"]=good.stock_num
-            json_dict["fav_num"]=good.fav_num
-            json_dict["goods_desc"]=good.goods_desc
-            json_dict["main_img"]=str(good.main_img)
-            json_dict["category_id"]=good.category.name
-            json_list.append(json_dict)
-        return JsonResponse(json_list,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})
-
-from apps.goods.serializers import GoodsSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-class GoodsList(APIView):
-    def get(self,request):
-        goods=Goods.objects.all()[:10]
-        goods_json=GoodsSerializer(goods,many=True)
-        return Response(goods_json.data)
-
-from rest_framework import mixins
-from rest_framework import generics
-class GoodsListView_mixins(mixins.ListModelMixin,generics.GenericAPIView):
-    queryset=Goods.objects.all()
-    serializer_class=GoodsSerializer
-    def get(self,request,*args,**kwargs):
-        return self.list(request,*args,**kwargs)
-
-class GoodsListView_List(generics.ListAPIView):
-    queryset=Goods.objects.all()
-    serializer_class=GoodsSerializer
-     
+    def binddata(self,datas,id,n):
+        datas=GoodsCategory.objects.filter(parent_id = id)
+        for data in datas:
+            self.alist[data.id]=self.spacelength(n)+data.name
+            self.binddata(datas,data.id,n+2)
+        return self.alist
     
+    def spacelength(self,i):
+        space=''
+        for j in range(1,i):
+            space+="&nbsp;&nbsp;"
+        return space+"|--"
+
+    def get(self,request):
+        #cates_all=GoodsCategory.objects.all()
+        #cates=self.binddata(cates_all,0,1)
+        #print(cates)
+        form_obj=GoodsCategoryForm()
+        return render(request,"shop/goods/cate_add.html",{"form_obj":form_obj})
+
+    def post(self,request):
+        form_obj=forms.GoodsCategoryForm(request.POST,request.FILES)
+        if form_obj.is_valid():
+            name=request.POST.get("name",'')
+            cates=GoodsCategory.objects.filter(name=name)
+            if cates:
+                info='分类已经存在'
+            else:
+                #form_obj.cleaned_data["is_staff"]=1 
+                #form_obj.cleaned_data["is_superuser"]=0 #非管理员
+                #接收页面传递过来的参数，进行新增
+                cate=GoodsCategory.objects.create(**form_obj.cleaned_data)
+                #成功后，重定向到商品分类列表页面
+                #info='注册成功,请登陆'
+                return redirect('cate_index')
+            return render(request,'shop/goods/cate_index.html',{"form_obj":form_obj,"info":info})
+        else:
+            errors = form_obj.errors
+            print(errors)
+            return render(request, "shop/goods/cate_add.html", {'form_obj': form_obj, 'info': errors})
+        #return render(request,'shop/user_reg.html',{"form_obj":form_obj})
+
+class GoodsView(View):
+    def __init__(self):
+        self.alist={}
+
+    def binddata(self,datas,id,n):
+        datas=GoodsCategory.objects.filter(parent_id = id)
+        for data in datas:
+            self.alist[data.id]=self.spacelength(n)+data.name
+            self.binddata(datas,data.id,n+2)
+        return self.alist
+    
+    def spacelength(self,i):
+        space=''
+        for j in range(1,i):
+            space+="&nbsp;&nbsp;"
+        return space+"|--"
+
+    def get(self,request):
+        cates_all=GoodsCategory.objects.all()
+        cates=self.binddata(cates_all,0,1)
+        return render(request,"shop/goods/index.html",{"cates":cates})
+
+    def post(self,request):
+        pass
+
+class GoodsAddView(View):
+    def __init__(self):
+        self.alist={}
+
+    def binddata(self,datas,id,n):
+        datas=GoodsCategory.objects.filter(parent_id = id)
+        for data in datas:
+            self.alist[data.id]=self.spacelength(n)+data.name
+            self.binddata(datas,data.id,n+2)
+        return self.alist
+    
+    def spacelength(self,i):
+        space=''
+        for j in range(1,i):
+            space+="&nbsp;&nbsp;"
+        return space+"|--"
+
+    def get(self,request):
+        cates_all=GoodsCategory.objects.all()
+        cates=self.binddata(cates_all,0,1)
+        return render(request,"shop/goods/add.html",{"cates":cates})
+
+    def post(self,request):
+        name=request.POST.get("name",'')
+        parent_id=request.POST.get("parent_id",'')
+        market_price=request.POST.get("market_price",'0')
+        price=request.POST.get("price",'0')
+        goods_desc=request.POST.get("goods_desc",'')
+        main_img=request.POST.get("main_img",'')
+        message="字段需要填写"
+        if not name:
+            message="请输入姓名"
+        
+
+        return render(request, 'login/login.html', {"message": message}) 
+        print(name)
+        return redirect('index')
+
+def ajax_goods(request):
+    cate_id=request.GET.get("cate_id",'')
+    goodname=request.GET.get("goodname",'')
+    status=request.GET.get("status")
+    
+    search_dict=dict()
+    if cate_id:
+        search_dict["category"]=cate_id
+    if goodname: 
+        search_dict["name__contains"]=goodname
+    if status:
+        search_dict["status"]=status
+        
+    page_size=2
+    page=int(request.GET["page"])
+    #获取总数count
+    total=Goods.objects.filter(**search_dict).count()
+    #print(**search_dict)
+    #通过切片获取当前页和下一页的数据
+    goods=Goods.objects.filter(**search_dict).order_by("-id")[(page-1)*page_size : page*page_size]
+    rows=[]
+    datas={"total":total,"rows":rows}
+    for good in goods:
+        rows.append({
+            "id":good.id,
+            "name":good.name,
+            "market_price":good.market_price,
+            "price":good.price,
+            "category_id":good.category.name,
+            "click_num":good.click_num,
+            "amount":good.amount,
+            })
+    return JsonResponse(datas,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})
