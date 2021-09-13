@@ -132,8 +132,8 @@ MEDIA_URL="/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'PAGE_SIZE': 5,
 }
 
 CKEDITOR_UPLOAD_PATH='upload/'
@@ -160,33 +160,20 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-""" # 设置redis存储session信息
-SESSION_ENGINE = 'redis_sessions.session'
-# redis服务的ip地址
-SESSION_REDIS_HOST = '192.168.77.101'
-# redis服务的端口号
-SESSION_REDIS_PORT = 6379
-# redis中的哪一个数据库
-SESSION_REDIS_DB = 2
-# 链接redis的密码，没有写空
-SESSION_REDIS_PASSWORD = '123456'
-# 指定session信息的前缀
-SESSION_REDIS_PREFIX = 'session' """
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://192.168.77.101:6379",
+#         "OPTIONS": {
+#             "CLIENT_CLASS":"django_redis.client.DefaultClient",
+#             "PASSWORD":"123456",
+#         }
+#     }
+# }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.77.101:6379",
-        "OPTIONS": {
-            "CLIENT_CLASS":"django_redis.client.DefaultClient",
-            "PASSWORD":"123456",
-        }
-    }
-}
+# # session的存储配置
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_CACHE_ALIAS = 'default'
 
-# session的存储配置
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
-
-# 设置session失效时间,单位为秒
-SESSION_COOKIE_AGE = 60*5
+# # 设置session失效时间,单位为秒
+# SESSION_COOKIE_AGE = 60*5

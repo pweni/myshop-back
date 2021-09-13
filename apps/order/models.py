@@ -1,59 +1,70 @@
 from django.db import models
+from apps.users.models import *
+from apps.goods.models import *
 
-# Create your models here.
+
 class Cart(models.Model):
-    cart_id = models.AutoField(primary_key=True)
-    member_id = models.IntegerField()
-    goods_id = models.IntegerField()
-    goods_name = models.CharField(max_length=100)
-    goods_price = models.DecimalField(max_digits=10, decimal_places=2)
-    goods_num = models.IntegerField()
+    '''
+    购物车模型
+    '''
+    user = models.ForeignKey(MyUser, null=True, blank=True, verbose_name='用户', on_delete=models.DO_NOTHING)
+    goods = models.ForeignKey(Goods, null=True, blank=True, verbose_name='商品', on_delete=models.DO_NOTHING)
+    goods_num = models.IntegerField(default=1, verbose_name='购物车中商品数量')
+
+    def __str__(self):
+        return str(self.goods.id)
 
     class Meta:
+        verbose_name='购物车信息'
+        verbose_name_plural='购物车信息'
         managed = True
-        db_table = 't_cart'
+        db_table = 'd_cart'
+        verbose_name = "购物车"
+        #unique_together = ("user", "goods")  # 联合索引
+
 
 class Order(models.Model):
-    order_id = models.AutoField(primary_key=True)
-    order_sn = models.IntegerField()
-    pay_sn = models.IntegerField()
-    member_id = models.IntegerField()
-    username = models.CharField(max_length=50)
-    add_time = models.IntegerField()
-    payment_code = models.CharField(max_length=10)
-    payment_time = models.IntegerField(blank=True, null=True)
-    finnshed_time = models.IntegerField()
-    quantity = models.IntegerField(blank=True, null=True)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    order_total = models.DecimalField(max_digits=10, decimal_places=2)
-    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    order_state = models.CharField(max_length=2)
-    delete_state = models.IntegerField()
-    order_from = models.CharField(max_length=1)
+    ORDER_STATUS=(
+        ("paying","待支付"),
+        ("payed","已支付"),
+        ("shipping","配送中"),
+        ("complete","订单结束"),
+        ("cancel", "订单取消"),
+    )
+    order_sn = models.CharField(max_length=50, null=True, blank=True,verbose_name="订单号")
+    order_total = models.IntegerField(default=0,verbose_name="商品总件数")
+    order_price =models.DecimalField(default=0,max_digits=10, decimal_places=2,verbose_name="订单总金额")
+    address = models.CharField(max_length=100, default="", verbose_name="收货地址")
+    contact_name = models.CharField(max_length=20, default="", verbose_name="联系人")
+    contact_mobile = models.CharField(max_length=11, default="",verbose_name="联系电话")
+    pay_method = models.IntegerField(default=0, verbose_name="支付方式")
+    memo = models.CharField(max_length=200,default='', verbose_name="订单备注")
+    order_state = models.CharField(max_length=20,choices=ORDER_STATUS,default='paying',verbose_name="用户")
+    user = models.ForeignKey(MyUser, verbose_name="用户", on_delete=models.DO_NOTHING)
+    create_date = models.DateTimeField(default=datetime.now, verbose_name='创建时间')
 
     class Meta:
+        verbose_name='订单信息'
+        verbose_name_plural='订单信息'
         managed = True
-        db_table = 't_order'
+        db_table = 'd_order'
 
 
 class OrderGoods(models.Model):
-    order_goods_id = models.AutoField(primary_key=True)
-    order_id = models.IntegerField()
-    gid = models.IntegerField()
-    goods_price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.IntegerField()
+    '''
+    订单商品关联表
+    '''
+    order = models.ForeignKey(Order, verbose_name="订单主表",  on_delete=models.DO_NOTHING)
+    goods = models.ForeignKey(Goods, verbose_name="商品表", on_delete=models.DO_NOTHING)
+    goods_num = models.IntegerField(default=0, verbose_name="商品数量")
+    #保留下订单时的价格快照，因为会发生变化
+    price = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="商品价格")
+
+    create_date = models.DateTimeField(default=datetime.now, verbose_name='创建时间')
 
     class Meta:
+        verbose_name='订单商品信息'
+        verbose_name_plural='订单商品信息'
         managed = True
-        db_table = 't_order_goods'
 
-
-class OrderPay(models.Model):
-    pay_id = models.AutoField(primary_key=True)
-    pay_sn = models.IntegerField()
-    buyer_id = models.IntegerField()
-    api_pay_state = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 't_order_pay'
+        db_table = 'd_order_goods'

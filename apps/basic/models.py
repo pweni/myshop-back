@@ -1,27 +1,30 @@
+from datetime import datetime
+
 from django.db import models
 
 # Create your models here.
+from apps.users.models import MyUser
+
+
 class Address(models.Model):
-    address_id = models.AutoField(primary_key=True)
-    member_id = models.PositiveIntegerField()
-    true_name = models.CharField(max_length=50)
-    area_id = models.PositiveIntegerField()
-    city_id = models.IntegerField()
-    area_info = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    mobilephone = models.CharField(max_length=15, blank=True, null=True)
-    is_default = models.IntegerField()
+    """
+    用户配送地址
+    """
+    province = models.CharField(max_length=50, default="", verbose_name="省份")
+    city = models.CharField(max_length=50, default="", verbose_name="城市")
+    district = models.CharField(max_length=50, default="", verbose_name="区域")
+    address = models.CharField(max_length=100, default="", verbose_name="详细地址")
+    contact_name = models.CharField(max_length=20, default="", verbose_name="联系人")
+    contact_mobile = models.CharField(max_length=11, default="", verbose_name="联系电话")
+    user = models.ForeignKey(MyUser, verbose_name="用户" ,on_delete=models.DO_NOTHING)
+    is_default=models.IntegerField(default=0,verbose_name="是否默认配送地址")
+    create_date = models.DateTimeField(default=datetime.now, verbose_name="创建时间")
+
+    def __str__(self):
+        return self.province+self.city+self.district+self.address
 
     class Meta:
+        verbose_name = "用户配送地址"
+        verbose_name_plural = "用户配送地址"
         managed = True
-        db_table = 't_address'
-
-class Area(models.Model):
-    area_id = models.AutoField(primary_key=True)
-    area_name = models.CharField(max_length=50)
-    area_parent_id = models.PositiveIntegerField()
-    area_sort = models.PositiveIntegerField()
-
-    class Meta:
-        managed = True
-        db_table = 't_area'
+        db_table = 'd_address'
