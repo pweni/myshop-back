@@ -17,4 +17,4 @@ COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 #映射端口
 EXPOSE 82
 #运行命令
-CMD nginx
+CMD ["nginx", "-g", "daemon off;"]
