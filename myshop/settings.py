@@ -71,8 +71,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'shop',
         'USER': 'root',
-        'PASSWORD': '123456',#Aa_123456
-        'HOST': '127.0.0.1',#42.192.201.44
+        'PASSWORD': 'Aa_123456',#Aa_123456
+        'HOST': '192.168.77.103',#42.192.201.44
         'PORT': '3306',
         #取消外键约束，否则多对多模型迁移报django.db.utils.IntegrityError: (1215, 'Cannot add foreign key constraint')
             'OPTIONS': {
@@ -126,7 +126,7 @@ USE_TZ = True
 
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, '/static')
 
 MEDIA_URL="/media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
