@@ -122,7 +122,7 @@ def ajax_member(request):
     return JsonResponse(datas,safe=False,json_dumps_params={'ensure_ascii':False,"indent":4})
 
 
-def index(request):
+def index1(request):
     if request.method=="GET":
         users =MyUser.objects.all().order_by("-id")
         context={
